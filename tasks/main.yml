@@ -1,0 +1,23 @@
+---
+- name: Retrieve topic-id from component
+  dci_component:
+    id: '{{ dci_retrieve_component_component_id }}'
+  register: component
+
+- name: Retrieve topic information from topic
+  dci_topic:
+    id: '{{ component.topic_id }}'
+    embed: product
+  register: topic
+
+- name: Configure local yum repository file
+  yum_repository:
+    name: '{{ component.canonical_project_name }}'
+    description: '{{ component.name }}'
+    baseurl: '{{ dci_retrieve_component_repo_url | default("https://repo.distributed-ci.io") }}/{{ topic.product_id }}/{{ topic.id }}/{{ component.id }}/'
+    sslclientcert: '{{ dci_retrieve_component_sslclientcert | default("/etc/ssl/repo/dci.crt") }}'
+    sslclientkey: '{{ dci_retrieve_component_sslclientkey | default("/etc/ssl/repo/dci.key") }}'
+  become: True
+
+- name: Syncing remote repository to local directory
+  shell: reposync --repoid={{ component.canonical_project_name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo}}/{{ topic.product_name }}/{{ topic.name }}/{{ component.name }}"
