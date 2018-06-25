@@ -12,7 +12,7 @@
 
 - name: Configure local yum repository file
   yum_repository:
-    name: '{{ _component.component.canonical_project_name }}'
+    name: '{{ _topic.topic.product.name }}'
     description: '{{ _component.component.name }}'
     baseurl: '{{ dci_retrieve_component_repo_url | default("https://repo.distributed-ci.io") }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
     sslclientcert: '{{ dci_retrieve_component_sslclientcert | default("/etc/ssl/repo/dci.crt") }}'
@@ -20,5 +20,15 @@
   become: True
 
 - name: Syncing remote repository to local directory
-  shell: reposync --repoid={{ _component.component.canonical_project_name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo}}/{{ _topic.topic.product.name }}/{{ _topic.topic.name }}/{{ _component.component.name }}"
+  shell: reposync --repoid={{ _topic.topic.product.name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
+  become: True
+
+- name: Running createrepo locally
+  shell: createrepo --update -g comps.xml "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product_name }}"
+  args:
+    chdir: "{{ dci_retrieve_component_local_repo }}/"
+  become: True
+
+- name: Verify local repository integerity
+  shell: verifytree -a "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product_name }}"
   become: True
