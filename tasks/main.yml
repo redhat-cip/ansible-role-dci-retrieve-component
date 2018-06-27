@@ -28,7 +28,3 @@
   args:
     chdir: "{{ dci_retrieve_component_local_repo }}/"
   become: True
-
-- name: Verify local repository integerity
-  shell: verifytree -a "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}"
-  become: True

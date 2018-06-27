@@ -9,7 +9,7 @@ This role relies on [python-dciclient](https://github.com/redhat-cip/python-dcic
 
 If those are not installed, they should be installed before using this role.
 
-Also reposync should be installed.
+Also `yum-utils` should be installed.
 
 
 ## Role Variables
