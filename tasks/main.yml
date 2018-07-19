@@ -17,7 +17,13 @@
     baseurl: '{{ dci_retrieve_component_repo_url | default("https://repo.distributed-ci.io") }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
     sslclientcert: '{{ dci_retrieve_component_sslclientcert | default("/etc/ssl/repo/dci.crt") }}'
     sslclientkey: '{{ dci_retrieve_component_sslclientkey | default("/etc/ssl/repo/dci.key") }}'
+    enabled: no
   become: True
+
+- name: Cleanup local cache
+  command: yum clean all
+  args:
+    warn: no
 
 - name: Syncing remote repository to local directory
   shell: reposync --repoid={{ _topic.topic.product.name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
