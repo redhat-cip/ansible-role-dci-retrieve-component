@@ -1,0 +1,2 @@
+- name: sync component
+  include: sync_repo.yml

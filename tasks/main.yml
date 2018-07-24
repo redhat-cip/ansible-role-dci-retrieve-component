@@ -19,18 +19,6 @@
     sslclientkey: '{{ dci_retrieve_component_sslclientkey | default("/etc/ssl/repo/dci.key") }}'
     enabled: no
   become: True
+  notify: "sync component"
 
-- name: Cleanup local cache
-  command: yum clean all
-  args:
-    warn: no
-
-- name: Syncing remote repository to local directory
-  shell: reposync --repoid={{ _topic.topic.product.name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
-  become: True
-
-- name: Running createrepo locally
-  shell: createrepo --update -g comps.xml "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}"
-  args:
-    chdir: "{{ dci_retrieve_component_local_repo }}/"
-  become: True
+- meta: flush_handlers
