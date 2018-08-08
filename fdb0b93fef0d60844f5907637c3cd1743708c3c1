@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "11e41a89_149eb11d",
+        "filename": "tasks/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 56
+      },
+      "writtenOn": "2018-08-08T20:05:05Z",
+      "side": 1,
+      "message": "maybe that\u0027s another topic but instead of using |default everywhere why not just define all variables in defaults/main.yml ?",
+      "range": {
+        "startLine": 18,
+        "startChar": 52,
+        "endLine": 18,
+        "endChar": 67
+      },
+      "revId": "fdb0b93fef0d60844f5907637c3cd1743708c3c1",
+      "serverId": "6c1dc8ef-8b94-40e4-bd83-c2359d45ecc0",
+      "unresolved": false
+    }
+  ]
+}
