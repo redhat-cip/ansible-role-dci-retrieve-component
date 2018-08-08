@@ -15,6 +15,7 @@
     name: '{{ _topic.topic.product.name }}'
     description: '{{ _component.component.name }}'
     baseurl: '{{ dci_retrieve_component_repo_url | default("https://repo.distributed-ci.io") }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
+    sslverify: '{{ dci_rettrieve_component_sslverify|default("yes") }}'
     sslclientcert: '{{ dci_retrieve_component_sslclientcert | default("/etc/ssl/repo/dci.crt") }}'
     sslclientkey: '{{ dci_retrieve_component_sslclientkey | default("/etc/ssl/repo/dci.key") }}'
     enabled: no
