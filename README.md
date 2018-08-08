@@ -21,6 +21,7 @@ Also `yum-utils` should be installed.
 | dci_retrieve_component_repo_url | False | https://repo.distributed-ci.io | URL | URL where the components are stored |
 | dci_retrieve_component_sslclientcert | False | /etc/ssl/repo/dci.crt | Path | Path to the DCI client certificate |
 | dci_retrieve_component_sslclientkey | False | /etc/ssl/repo/dci.key | Path | Path to the DCI client key |
+| dci_retrieve_component_sslverify | False | yes | Bool | Wether to verify the certificate of dci_retrieve_component_repo_url |
 
 
 ### Example
