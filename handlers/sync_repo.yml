@@ -3,18 +3,22 @@
   command: yum clean all
   args:
     warn: no
+  become: True
 
 - name: Get Primary URL
   shell: curl -s -k --cert /etc/ssl/repo/dci.crt --key /etc/ssl/repo/dci.key {{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/repodata/repomd.xml | grep primary.xml.gz | awk -F'"' '{print $2}'
   register: primary
+  become: True
 
 - name: Download Primary
   shell: curl -s -k --cert /etc/ssl/repo/dci.crt --key /etc/ssl/repo/dci.key {{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.stdout }} | zcat > /tmp/test.xml
+  become: True
 
 - name: Cleanup RPMs
   shell: ./cleanup_repo.py
   args:
     chdir: "{{ role_path }}/files"
+  become: True
 
 - name: Syncing remote repository to local directory
   shell: reposync --repoid={{ _topic.topic.product.name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
