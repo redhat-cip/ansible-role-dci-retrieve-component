@@ -23,6 +23,9 @@ An Ansible role that retrieve DCI component
 mkdir -p %{buildroot}%{_datadir}/dci/roles/dci-retrieve-component
 chmod 755 %{buildroot}%{_datadir}/dci/roles/dci-retrieve-component
 
+cp -r defaults %{buildroot}%{_datadir}/dci/roles/dci-retrieve-component
+cp -r files %{buildroot}%{_datadir}/dci/roles/dci-retrieve-component
+cp -r handlers %{buildroot}%{_datadir}/dci/roles/dci-retrieve-component
 cp -r tasks %{buildroot}%{_datadir}/dci/roles/dci-retrieve-component
 
 
