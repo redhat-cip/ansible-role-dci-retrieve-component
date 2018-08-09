@@ -7,6 +7,7 @@ URL:        https://github.com/redhat-cip/ansible-role-dci-retrieve-component
 Source0:    ansible-role-dci-retrieve-component-%{version}.tar.gz
 
 BuildArch:  noarch
+Requires:   createrepo
 Requires:   yum-utils
 Requires:   dci-ansible
 
