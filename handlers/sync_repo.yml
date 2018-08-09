@@ -15,7 +15,7 @@
   become: True
 
 - name: Cleanup RPMs
-  shell: ./cleanup_repo.py
+  shell: ./cleanup_repo.py {{ _topic.topic.product.name }}
   args:
     chdir: "{{ role_path }}/files"
   become: True
