@@ -20,6 +20,8 @@
     sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
     enabled: no
   become: True
-  notify: "sync component"
+  register: local_yum
 
-- meta: flush_handlers
+- name: Sync component
+  include_tasks: sync_repo.yml
+  when: local_yum.changed
