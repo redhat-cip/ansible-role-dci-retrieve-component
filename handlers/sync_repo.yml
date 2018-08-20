@@ -42,8 +42,14 @@
   shell: reposync --repoid={{ _topic.topic.product.name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
   become: True
 
+- name: Check if a group file exist
+  stat:
+    path: '{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}/comps.xml'
+  register: comps
+  become: True
+
 - name: Running createrepo locally
-  shell: createrepo --update -g comps.xml "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}"
+  shell: createrepo --update {% if comps.stat.exists %}-g comps.xml{% endif %} "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}"
   args:
     chdir: "{{ dci_retrieve_component_local_repo }}/"
   become: True
