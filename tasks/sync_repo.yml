@@ -33,7 +33,7 @@
   when: primary_file.changed
 
 - name: Cleanup RPMs
-  shell: ./cleanup_repo.py {{ _topic.topic.product.name }}
+  shell: ./cleanup_repo.py {{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}
   args:
     chdir: "{{ role_path }}/files"
   become: True
