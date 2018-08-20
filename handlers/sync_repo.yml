@@ -1,12 +1,36 @@
 ---
-- name: Get Primary URL
-  shell: curl -s -k --cert /etc/ssl/repo/dci.crt --key /etc/ssl/repo/dci.key {{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/repodata/repomd.xml | grep primary.xml.gz | awk -F'"' '{print $2}'
-  register: primary
+- name: Get repomd.xml
+  uri:
+    client_cert: /etc/ssl/repo/dci.crt
+    client_key: /etc/ssl/repo/dci.key
+    return_content: yes
+    url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/repodata/repomd.xml'
+  register: repomd
   become: True
 
+- name: Get Primary URL
+  xml:
+    xmlstring: '{{ repomd.content }}'
+    xpath: /x:repomd/x:data[@type='primary']/x:location
+    namespaces:
+      x: http://linux.duke.edu/metadata/repo
+    attribute: x:href
+    content: attribute
+  register: primary
+
 - name: Download Primary
-  shell: curl -s -k --cert /etc/ssl/repo/dci.crt --key /etc/ssl/repo/dci.key {{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.stdout }} | zcat > /tmp/test.xml
+  get_url:
+    client_cert: /etc/ssl/repo/dci.crt
+    client_key: /etc/ssl/repo/dci.key
+    dest: /tmp/test.xml.gz
+    url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.matches[0].values()[0].href }}'
   become: True
+  register: primary_file
+
+- name: Decompress the Primary file
+  shell: gunzip -f -c /tmp/test.xml.gz > /tmp/test.xml
+  become: True
+  when: primary_file.changed
 
 - name: Cleanup RPMs
   shell: ./cleanup_repo.py {{ _topic.topic.product.name }}
