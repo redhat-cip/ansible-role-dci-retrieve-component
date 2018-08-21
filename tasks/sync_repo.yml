@@ -5,6 +5,7 @@
     client_key: /etc/ssl/repo/dci.key
     return_content: yes
     url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/repodata/repomd.xml'
+    validate_certs: '{{ dci_retrieve_component_sslverify }}'
   register: repomd
   become: True
 
@@ -24,6 +25,7 @@
     client_key: /etc/ssl/repo/dci.key
     dest: /tmp/test.xml.gz
     url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.matches[0].values()[0].href }}'
+    validate_certs: '{{ dci_retrieve_component_sslverify }}'
   become: True
   register: primary_file
 
