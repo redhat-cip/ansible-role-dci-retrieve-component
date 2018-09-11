@@ -30,6 +30,7 @@ Also `yum-utils` should be installed.
 - hosts: localhost
   vars:
     dci_retrieve_component_component_id: XXX
+    dci_retrieve_component_component_name: XXX # Optional, if not present take the topic name
     dci_retrieve_component_local_repo: /var/www/html
   roles:
     - dci-retrieve-component

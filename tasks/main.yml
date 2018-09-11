@@ -1,4 +1,8 @@
 ---
+- name: Set global variables
+  set_fact:
+      component_name: '{% if dci_retrieve_component_name is defined %}{{dci_retrieve_component_name}}{% else %}{{ _topic.topic.product.name }}{% endif %}'
+
 - name: Retrieve topic-id from component
   dci_component:
     id: '{{ dci_retrieve_component_component_id }}'
@@ -12,7 +16,7 @@
 
 - name: Configure local yum repository file
   yum_repository:
-    name: '{{ _topic.topic.product.name }}'
+    name: '{{ component_name }}'
     description: '{{ _component.component.name }}'
     baseurl: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
     sslverify: '{{ dci_retrieve_component_sslverify }}'
