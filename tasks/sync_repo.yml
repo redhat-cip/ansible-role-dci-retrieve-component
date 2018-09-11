@@ -51,7 +51,7 @@
   become: True
 
 - name: Running createrepo locally
-  shell: createrepo --update {% if comps.stat.exists %}-g comps.xml{% endif %} "{{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}"
+  shell: createrepo --update {% if comps.stat.exists %}-g comps.xml{% endif %} "{{ dci_retrieve_component_local_repo }}/{% if dci_retrieve_component_name is defined %}{{dci_retrieve_component_name}}{% else %}{{ _topic.topic.product.name }}{% endif %}"
   args:
     chdir: "{{ dci_retrieve_component_local_repo }}/"
   become: True
