@@ -41,13 +41,13 @@
   when: primary_file.changed
 
 - name: Cleanup RPMs
-  shell: ./cleanup_repo.py {{ dci_retrieve_component_local_repo }}/{{ _topic.topic.product.name }}
+  shell: ./cleanup_repo.py {{ dci_retrieve_component_local_repo }}/{{ component_name }}
   args:
     chdir: "{{ role_path }}/files"
   become: True
 
 - name: Syncing remote repository to local directory
-  shell: reposync --repoid={{ _topic.topic.product.name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
+  shell: reposync --repoid={{ component_name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
   become: True
 
 - name: Check if a group file exist
