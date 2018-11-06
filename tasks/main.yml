@@ -12,7 +12,7 @@
 
 - name: Set global variables
   set_fact:
-    component_name: '{% if dci_retrieve_component_name is defined %}{{ dci_retrieve_component_name }}{% else %}{{ _topic.topic.product.name }}{% endif %}'
+    component_name: '{% if dci_retrieve_component_component_name is defined %}{{ dci_retrieve_component_component_name }}{% else %}{{ _topic.topic.product.name }}{% endif %}'
 
 - name: Configure local yum repository file
   yum_repository:

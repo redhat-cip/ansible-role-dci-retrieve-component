@@ -17,6 +17,7 @@ Also `yum-utils` should be installed.
 | Variable name | Required | Default | Type | Description |
 |---------------|----------|---------|------|-------------|
 | dci_retrieve_component_component_id | True | N/A | UUID | ID of the component to retrieve |
+| dci_retrieve_component_component_name | False | N/A | String | Name of the component directory on disk |
 | dci_retrieve_component_local_repo | True | N/A | Path | Path where to store the component locally |
 | dci_retrieve_component_repo_url | False | https://repo.distributed-ci.io | URL | URL where the components are stored |
 | dci_retrieve_component_sslclientcert | False | /etc/ssl/repo/dci.crt | Path | Path to the DCI client certificate |
