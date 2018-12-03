@@ -47,6 +47,11 @@
     chdir: "{{ role_path }}/files"
   become: True
 
+- name: Cleanup local yum cache
+  shell: yum clean metadata --disablerepo=* --enablerepo={{ component_name }}
+  args:
+    warn: no
+
 - name: Syncing remote repository to local directory
   shell: reposync --arch={{ dci_retrieve_component_arch }} --repoid={{ component_name }} -l -m --download-meta -n -d -p "{{ dci_retrieve_component_local_repo }}/"
   become: True
