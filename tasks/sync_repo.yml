@@ -32,6 +32,7 @@
     dest: /tmp/test.xml.gz
     url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.matches[0].values()[0].href }}'
     validate_certs: '{{ dci_retrieve_component_sslverify }}'
+    force: yes
   become: True
   register: primary_file
 
