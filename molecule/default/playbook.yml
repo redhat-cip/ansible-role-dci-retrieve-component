@@ -1,0 +1,6 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - include_role:
+        name: ansible-role-dci-retrieve-component
