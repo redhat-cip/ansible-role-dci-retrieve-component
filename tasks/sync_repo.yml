@@ -3,17 +3,17 @@
   file:
     path: '{{ dci_retrieve_component_local_repo }}/{{ component_name }}'
     state: directory
-  become: True
+  become: true
 
 - name: Get repomd.xml
   uri:
     client_cert: '{{ dci_retrieve_component_sslclientcert }}'
     client_key: '{{ dci_retrieve_component_sslclientkey }}'
-    return_content: yes
+    return_content: true
     url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/repodata/repomd.xml'
     validate_certs: '{{ dci_retrieve_component_sslverify }}'
   register: repomd
-  become: True
+  become: true
 
 - name: Get Primary URL
   xml:
@@ -32,28 +32,28 @@
     dest: /tmp/test.xml.gz
     url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.matches[0].values()[0].href }}'
     validate_certs: '{{ dci_retrieve_component_sslverify }}'
-    force: yes
-  become: True
+    force: true
+  become: true
   register: primary_file
 
 - name: Decompress the Primary file
   shell: gunzip -f -c /tmp/test.xml.gz > /tmp/test.xml
-  become: True
+  become: true
   when: primary_file.changed
 
 - name: Cleanup RPMs
   shell: ./cleanup_repo.py {{ dci_retrieve_component_local_repo }}/{{ component_name }}
   args:
     chdir: "{{ role_path }}/files"
-  become: True
+  become: true
 
 - name: Cleanup local yum cache
   shell: >
     yum --config=/etc/yum.repos.d/{{ component_name }}.repo
     clean metadata --disablerepo=* --enablerepo={{ component_name }}
   args:
-    warn: no
-  become: True
+    warn: false
+  become: true
 
 - name: Syncing remote repository to local directory
   shell: >
@@ -62,16 +62,16 @@
     --repoid={{ component_name }}
     -l -m --download-meta -n -d
     -p {{ dci_retrieve_component_local_repo }}/
-  become: True
+  become: true
 
 - name: Check if a group file exist
   stat:
     path: '{{ dci_retrieve_component_local_repo }}/{{ component_name }}/comps.xml'
   register: comps
-  become: True
+  become: true
 
 - name: Running createrepo locally
   shell: createrepo --update {% if comps.stat.exists %}-g comps.xml{% endif %} "{{ dci_retrieve_component_local_repo }}/{{ component_name }}"
   args:
     chdir: "{{ dci_retrieve_component_local_repo }}/"
-  become: True
+  become: true

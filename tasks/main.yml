@@ -22,8 +22,8 @@
     sslverify: '{{ dci_retrieve_component_sslverify }}'
     sslclientcert: '{{ dci_retrieve_component_sslclientcert }}'
     sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
-    enabled: no
-  become: True
+    enabled: false
+  become: true
   register: local_yum
 
 - name: Sync component
