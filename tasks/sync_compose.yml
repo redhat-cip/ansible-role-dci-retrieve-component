@@ -1,0 +1,37 @@
+---
+- name: Check if a directory exist
+  file:
+    path: '{{ dci_retrieve_component_local_repo }}/{{ component_name }}'
+    state: directory
+  become: true
+
+- name: Syncing remote repository to local directory
+  shell: >
+    reposync --config=/etc/yum.repos.d/'{{ _component.component.name }}-{{ item.1 }}-{{ item.0.arch  }}'.repo
+    --arch={{ item.0.arch  }}
+    --repoid={{ _component.component.name }}-{{ item.1 }}-{{ item.0.arch  }}
+    -l -m --download-meta -n -d
+    -p {{ dci_retrieve_component_local_repo }}/{{ item.1 }}/{{ item.0.arch  }}/{{ item.0.tree }}/
+  become: true
+  with_subelements:
+    - '{{ compose }}'
+    - variant
+
+
+- name: Download .treeinfo
+  get_url:
+    url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ item.1 }}/{{ item.0.arch  }}/{{ item.0.tree }}/.treeinfo'
+    dest: '{{ dci_retrieve_component_local_repo }}/{{ item.1 }}/{{ item.0.arch  }}/{{ item.0.tree }}/.treeinfo'
+    client_cert: '{{ dci_retrieve_component_sslclientcert }}'
+    client_key: '{{ dci_retrieve_component_sslclientkey }}'
+  with_subelements:
+    - '{{ compose }}'
+    - variant
+
+- name: Download .composeinfo
+  get_url:
+    url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/.composeinfo'
+    dest: '{{ dci_retrieve_component_local_repo }}/.composeinfo'
+    client_cert: '{{ dci_retrieve_component_sslclientcert }}'
+    client_key: '{{ dci_retrieve_component_sslclientkey }}'
+    
