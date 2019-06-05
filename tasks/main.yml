@@ -14,7 +14,8 @@
   set_fact:
     component_name: '{% if dci_retrieve_component_component_name is defined %}{{ dci_retrieve_component_component_name }}{% else %}{{ _topic.topic.product.name }}{% endif %}'
 
-- name: Configure local yum repository file
+# Old format (Repo only)
+- name: Configure local yum repo file for RHEL 7.X
   yum_repository:
     name: '{{ component_name }}'
     description: '{{ _component.component.name }}'
@@ -25,7 +26,34 @@
     enabled: false
   become: true
   register: local_yum
+  when:
+    - topic.startswith('RHEL-7')|bool
+    - topic == 'RHEL-8'|bool
 
 - name: Sync component
   include_tasks: sync_repo.yml
-  when: local_yum.changed
+  when:
+    - topic.startswith('RHEL-7')|bool
+    - topic == 'RHEL-8'|bool
+
+# New format (Full Compose)
+- name: Configure local yum repos file for RHEL 8.X
+  yum_repository:
+    name: '{{ _component.component.name }}-{{ item_rhel8.1 }}-{{ item_rhel8.0.arch  }}'
+    description: '{{ _component.component.name }}'
+    baseurl: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ item_rhel8.1 }}/{{  item_rhel8.0.arch }}/{{  item_rhel8.0.tree }}'
+    sslverify: '{{ dci_retrieve_component_sslverify }}'
+    sslclientcert: '{{ dci_retrieve_component_sslclientcert }}'
+    sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
+    enabled: false
+  become: true
+  loop_control:
+    loop_var: item_rhel8
+  with_subelements:
+    - '{{ compose }}'
+    - variant
+  when: topic.startswith('RHEL-8.')|bool
+
+- name: Sync compose
+  include_tasks: sync_compose.yml
+  when: topic.startswith('RHEL-8.')|bool
