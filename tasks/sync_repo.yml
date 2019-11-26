@@ -30,38 +30,36 @@
     client_cert: '{{ dci_retrieve_component_sslclientcert }}'
     client_key: '{{ dci_retrieve_component_sslclientkey }}'
     dest: /tmp/test.xml.gz
-    url: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.matches[0].values()[0].href }}'
+    url: "{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/\
+    {{ _topic.topic.id }}/{{ _component.component.id }}/{{ primary.matches[0].values()[0].href }}"
     validate_certs: '{{ dci_retrieve_component_sslverify }}'
     force: true
   become: true
   register: primary_file
 
-- name: Decompress the Primary file
+- name: Decompress the Primary file  # noqa 503
   shell: gunzip -f -c /tmp/test.xml.gz > /tmp/test.xml
   become: true
   when: primary_file.changed
 
-- name: Cleanup RPMs
-  shell: ./cleanup_repo.py {{ dci_retrieve_component_local_repo }}/{{ component_name }}
+- name: Cleanup RPMs  # noqa 301
+  command: "./cleanup_repo.py {{ dci_retrieve_component_local_repo }}/{{ component_name }}"
   args:
     chdir: "{{ role_path }}/files"
   become: true
 
-- name: Cleanup local yum cache
-  shell: >
-    yum --config=/etc/yum.repos.d/{{ component_name }}.repo
-    clean metadata --disablerepo=* --enablerepo={{ component_name }}
+- name: Cleanup local yum cache  # noqa 301
+  command: "yum --config=/etc/yum.repos.d/{{ component_name }}.repo clean metadata --disablerepo=* --enablerepo={{ component_name }}"
   args:
     warn: false
   become: true
 
-- name: Syncing remote repository to local directory
-  shell: >
-    reposync --config=/etc/yum.repos.d/{{ component_name }}.repo
-    --arch={{ dci_retrieve_component_arch }}
-    --repoid={{ component_name }}
-    -l -m --download-meta -n -d
-    -p {{ dci_retrieve_component_local_repo }}/
+- name: Syncing remote repository to local directory  # noqa 301
+  command: "reposync --config=/etc/yum.repos.d/{{ component_name }}.repo
+  --arch={{ dci_retrieve_component_arch }}
+  --repoid={{ component_name }}
+  -l -m --download-meta -n -d
+  -p {{ dci_retrieve_component_local_repo }}/"
   become: true
 
 - name: Check if a group file exist
@@ -70,8 +68,8 @@
   register: comps
   become: true
 
-- name: Running createrepo locally
-  shell: createrepo --update {% if comps.stat.exists %}-g comps.xml{% endif %} "{{ dci_retrieve_component_local_repo }}/{{ component_name }}"
+- name: Running createrepo locally  # noqa 301
+  command: createrepo --update {% if comps.stat.exists %}-g comps.xml{% endif %} "{{ dci_retrieve_component_local_repo }}/{{ component_name }}"
   args:
     chdir: "{{ dci_retrieve_component_local_repo }}/"
   become: true
