@@ -14,18 +14,29 @@
   set_fact:
     component_name: '{% if dci_retrieve_component_component_name is defined %}{{ dci_retrieve_component_component_name }}{% else %}{{ _topic.topic.product.name }}{% endif %}'
 
-- name: Configure local yum repository file
-  yum_repository:
-    name: '{{ component_name }}'
-    description: '{{ _component.component.name }}'
-    baseurl: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
-    sslverify: '{{ dci_retrieve_component_sslverify }}'
-    sslclientcert: '{{ dci_retrieve_component_sslclientcert }}'
-    sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
-    enabled: false
-  become: true
-  register: local_yum
+- name: Download the component when it's a legacy repository
+  block:
+    - name: Configure local yum repository file
+      yum_repository:
+        name: '{{ component_name }}'
+        description: '{{ _component.component.name }}'
+        baseurl: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
+        sslverify: '{{ dci_retrieve_component_sslverify }}'
+        sslclientcert: '{{ dci_retrieve_component_sslclientcert }}'
+        sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
+        enabled: false
+      become: true
+      register: local_yum
 
-- name: Sync component
-  include_tasks: sync_repo.yml
-  when: local_yum.changed
+    - name: Sync component (reposync)
+      include_tasks: sync_repo.yml
+      when:
+        - local_yum.changed
+  when:
+    - _component.component.type != "Compose"
+
+- name: Download the component when it's a Compose
+  # command: /bin/dci-downloader --variant OpenStack,DevTools --arch x86_64 --component-id "{{ _component.component.id }}"
+  command: /bin/dci-downloader '{{ _topic.topic.name }}' '{{ dci_retrieve_component_local_repo}}' --variant OpenStack,DevTools --arch x86_64
+  when:
+    - _component.component.type == "Compose"
