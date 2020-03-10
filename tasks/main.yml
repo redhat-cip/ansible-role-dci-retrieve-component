@@ -34,8 +34,6 @@
 
     - name: Sync component (reposync)
       include_tasks: sync_repo.yml
-      when:
-        - local_yum.changed
   when:
     - _component.component.type != "Compose"
 
