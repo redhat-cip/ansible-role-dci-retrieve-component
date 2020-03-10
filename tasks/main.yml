@@ -30,12 +30,9 @@
         sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
         enabled: false
       become: true
-      register: local_yum
 
     - name: Sync component (reposync)
       include_tasks: sync_repo.yml
-      when:
-        - local_yum.changed
   when:
     - _component.component.type != "Compose"
 
