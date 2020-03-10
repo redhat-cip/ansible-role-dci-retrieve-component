@@ -4,8 +4,8 @@ dependency:
   enabled: false
 driver:
   name: docker
-lint:
-  name: yamllint
+lint: |
+  yamllint tasks
 platforms:
   - name: el7
     image: centos:7
@@ -19,8 +19,8 @@ provisioner:
   env:
     ANSIBLE_LIBRARY: /var/tmp/dci/modules/
     ANSIBLE_MODULE_UTILS: /var/tmp/dci/module_utils/
-  lint:
-    name: ansible-lint
+  lint: |
+    ansible-lint
 scenario:
   name: default
   test_sequence:
@@ -33,5 +33,5 @@ scenario:
     - destroy
 verifier:
   name: testinfra
-  lint:
-    name: flake8
+  lint: |
+    flake8
