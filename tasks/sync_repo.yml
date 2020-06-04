@@ -48,14 +48,28 @@
     chdir: "{{ role_path }}/files"
   become: true
 
+- name: Detect package manager
+  set_fact:
+    yum_cmd: yum
+    reposync_cmd: reposync
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+        (ansible_distribution_major_version <= "7")
+
+- name: Detect package manager
+  set_fact:
+    yum_cmd: dnf
+    reposync_cmd: dnf reposync
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "RedHat") and
+        (ansible_distribution_major_version >= "8")
+
 - name: Cleanup local yum cache  # noqa 301
-  command: "yum --config=/etc/yum.repos.d/{{ component_name }}.repo clean metadata --disablerepo=* --enablerepo={{ component_name }}"
+  command: "{{ yun_cmd }} --config=/etc/yum.repos.d/{{ component_name }}.repo clean metadata --disablerepo=* --enablerepo={{ component_name }}"
   args:
     warn: false
   become: true
 
 - name: Syncing remote repository to local directory  # noqa 301
-  command: "reposync --config=/etc/yum.repos.d/{{ component_name }}.repo
+  command: "{{ reposync_cmd }} --config=/etc/yum.repos.d/{{ component_name }}.repo
   --arch={{ dci_retrieve_component_arch }}
   --repoid={{ component_name }}
   -l -m --download-meta -n -d
