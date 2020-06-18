@@ -12,8 +12,14 @@ platforms:
     command: /sbin/init
     capabilities:
       - SYS_ADMIN
+  - name: el8
+    image: centos:8
+    command: /sbin/init
+    capabilities:
+      - SYS_ADMIN
 provisioner:
   name: ansible
+  log: true
   connection_options:
     ansible_user: centos
   env:
