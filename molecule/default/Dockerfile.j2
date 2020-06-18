@@ -5,7 +5,7 @@ FROM {{ item.image }}
 {% endif %}
 
 RUN yum install -y epel-release https://packages.distributed-ci.io/dci-release.el7.noarch.rpm && \
-    yum install -y sudo ansible python2-dciclient && \
+    yum install -y sudo ansible /usr/bin/dcictl && \
     yum clean all
 
 RUN adduser centos && \
