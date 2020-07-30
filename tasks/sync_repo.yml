@@ -63,7 +63,7 @@
         (ansible_distribution_major_version >= "8")
 
 - name: Cleanup local yum cache  # noqa 301
-  command: "{{ yun_cmd }} --config=/etc/yum.repos.d/{{ component_name }}.repo clean metadata --disablerepo=* --enablerepo={{ component_name }}"
+  command: "{{ yum_cmd }} --config=/etc/yum.repos.d/{{ component_name }}.repo clean metadata --disablerepo=* --enablerepo={{ component_name }}"
   args:
     warn: false
   become: true
