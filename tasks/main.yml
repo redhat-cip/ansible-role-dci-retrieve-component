@@ -10,35 +10,30 @@
     embed: product
   register: _topic
 
-- name: Set global variables
-  set_fact:
+- name: Download the component when it's a Compose
+  vars:
     component_name: '{% if dci_retrieve_component_component_name is defined -%}
     {{ dci_retrieve_component_component_name }}
     {%- else -%}
-    {{ _topic.topic.product.name }}
+    {{ _topic.topic.name }}
     {%- endif %}'
-
-- name: Download the component when it's a legacy repository
-  block:
-    - name: Configure local yum repository file
-      yum_repository:
-        name: '{{ component_name }}'
-        description: '{{ _component.component.name }}'
-        baseurl: '{{ dci_retrieve_component_repo_url }}/{{ _topic.topic.product_id }}/{{ _topic.topic.id }}/{{ _component.component.id }}/'
-        sslverify: '{{ dci_retrieve_component_sslverify }}'
-        sslclientcert: '{{ dci_retrieve_component_sslclientcert }}'
-        sslclientkey: '{{ dci_retrieve_component_sslclientkey }}'
-        enabled: false
-      become: true
-
-    - name: Sync component (reposync)
-      include_tasks: sync_repo.yml
-  when:
-    - _component.component.type.lower() != "compose"
-
-- name: Download the component when it's a Compose
-  command: /bin/dci-downloader '{{ _topic.topic.name }}'
-    '{{ dci_retrieve_component_local_repo }}/{{ dci_retrieve_component_component_name }}'
-    --variant OpenStack --variant DevTools --arch x86_64
+  command: /bin/dci-downloader '{{ component_name }}'
+    '{{ dci_retrieve_component_local_repo }}'
+    --variant OpenStack --arch x86_64
+    --component-id {{ dci_retrieve_component_component_id }}
   when:
     - _component.component.type.lower() == "compose"
+
+- name: Download the component when it's not a Compose
+  vars:
+    component_name: '{% if dci_retrieve_component_component_name is defined -%}
+    {{ dci_retrieve_component_component_name }}
+    {%- else -%}
+    {{ _topic.topic.name }}
+    {%- endif %}'
+  command: /bin/dci-downloader '{{ component_name }}'
+    '{{ dci_retrieve_component_local_repo }}'
+    --all
+    --component-id {{ dci_retrieve_component_component_id }}
+  when:
+    - _component.component.type.lower() != "compose"
